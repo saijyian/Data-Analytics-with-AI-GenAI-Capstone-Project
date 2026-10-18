@@ -1,3 +1,10 @@
+--Task 2 — Load seed data (sql/seed_data.sql) — 4 marks
+--Load data/customers.csv, data/products.csv, data/orders.csv into the three tables (via INSERT statements generated from the CSVs, or your engine's CSV import — either is acceptable as long as seed_data.sql or an equivalent loader script is committed and re-runnable). After loading:
+--SELECT COUNT(*) FROM customers; → 45
+--SELECT COUNT(*) FROM products; → 16
+--SELECT COUNT(*) FROM orders; → 180
+    
+--SQL CODE
 --Data seeding into the table
 START TRANSACTION;
 
