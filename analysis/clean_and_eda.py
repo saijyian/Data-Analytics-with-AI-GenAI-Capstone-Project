@@ -74,3 +74,37 @@ orders_clean = orders.drop_duplicates(subset=key, keep='first')
 # Print final shape
 print("Shape after removing duplicates:", orders_clean.shape)
 
+#Output
+#Duplicate order IDs:
+#['O0176', 'O0177', 'O0178', 'O0179', 'O0180']
+#Shape after removing duplicates: (175, 9)
+
+
+#Task 4 — Impute missing values — 4 marks
+#discount_pct: fill NaN with 0 (business rule: no promo code applied). 12 rows affected (count this on the deduplicated frame, i.e. after Task 3).
+#rating: fill NaN with the median of the non-null ratings on the deduplicated frame. Print the median before imputing — it must be 3.0. 15 rows affected.
+#After imputing, orders_clean[['discount_pct','rating']].isnull().sum() must be {'discount_pct': 0, 'rating': 0}.
+# Fill missing discount_pct values with 0
+print("Missing discount_pct before:", orders_clean['discount_pct'].isnull().sum())
+orders_clean['discount_pct'] = orders_clean['discount_pct'].fillna(0)
+
+# Find and print median rating before imputing
+median_rating = orders_clean['rating'].median()
+print("Median rating before imputation:", median_rating)
+
+# Fill missing rating values with the median
+print("Missing ratings before:", orders_clean['rating'].isnull().sum())
+orders_clean['rating'] = orders_clean['rating'].fillna(median_rating)
+
+# Check missing values after imputation
+print("Missing values after imputation:")
+print(orders_clean[['discount_pct', 'rating']].isnull().sum())
+
+#Output
+#Missing discount_pct before: 12
+#Median rating before imputation: 3.0
+#Missing ratings before: 15
+#Missing values after imputation:
+#discount_pct    0
+#rating          0
+
