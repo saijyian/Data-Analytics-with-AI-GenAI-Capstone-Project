@@ -53,4 +53,24 @@ print(orders["payment_method"].value_counts().sort_index())
 #COD     55
 #UPI     55
 
+#Task 3 — Remove duplicate orders — 4 marks
+#Using .duplicated(subset=[...], keep='first') on the natural key customer_id, product_id, order_date, quantity, discount_pct, payment_method, rating, returned (everything except order_id, which differs on the duplicated rows by design), detect and drop duplicates. Exactly 5 rows must be flagged and dropped; orders_clean.shape must be (175, 9) afterward. Print the 5 dropped order_id values — they must be O0176, O0177, O0178, O0179, O0180.
+
+# Columns used to identify duplicates
+key = [
+    'customer_id', 'product_id', 'order_date', 'quantity',
+    'discount_pct', 'payment_method', 'rating', 'returned'
+]
+
+# Find and print duplicate order IDs
+duplicates = orders.duplicated(subset=key, keep='first')
+
+print("Duplicate order IDs:")
+print(orders.loc[duplicates, 'order_id'].tolist())
+
+# Remove duplicates
+orders_clean = orders.drop_duplicates(subset=key, keep='first')
+
+# Print final shape
+print("Shape after removing duplicates:", orders_clean.shape)
 
