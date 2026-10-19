@@ -108,3 +108,45 @@ print(orders_clean[['discount_pct', 'rating']].isnull().sum())
 #discount_pct    0
 #rating          0
 
+#Task 5 — Merge and reconcile against Part 1 — 5 marks
+#Merge the cleaned orders with products (on product_id) and customers (on customer_id). Compute order_value = quantity * price * (1 - discount_pct/100) per row. Print the total: it must be 97358.30 across the 175 cleaned rows.
+
+#This is ₹2,501.90 less than Part 1 Report (a)'s raw total of ₹99,860.20. Write a one-paragraph reconciliation note (in the script's print output, not just a comment) that explicitly attributes this exact delta to the 5 duplicate rows removed in Task 3 (their combined order_value is ₹2,501.90 — sum the order_value of the 5 dropped rows independently as a check) — not to the discount/rating imputation, which does not change any order_value total. A note that just says "cleaning changed the numbers" without this specific attribution does not satisfy this task
+# Merge orders with products and customers
+merged = orders_clean.merge(products, on='product_id')
+merged = merged.merge(customers, on='customer_id')
+
+# Calculate order value after discount
+merged['order_value'] = (
+    merged['quantity'] * merged['price'] *
+    (1 - merged['discount_pct'] / 100)
+)
+
+# Print total order value
+clean_total = merged['order_value'].sum()
+print("Cleaned order value total: ₹", round(clean_total, 2))
+print("Number of cleaned rows:", len(merged))
+
+# Calculate the value of the 5 duplicate rows independently
+dropped = orders.loc[
+    orders['order_id'].isin(['O0176', 'O0177', 'O0178', 'O0179', 'O0180'])
+].merge(products, on='product_id')
+
+dropped['order_value'] = (
+    dropped['quantity'] * dropped['price'] *
+    (1 - dropped['discount_pct'] / 100)
+)
+
+duplicate_total = dropped['order_value'].sum()
+print("Order value of the 5 dropped duplicate rows: ₹", round(duplicate_total, 2))
+
+# Print reconciliation note
+print(
+    f"Reconciliation: Part 1's raw order value total was ₹99,860.20, "
+    f"while the cleaned total across {len(merged)} rows is ₹{clean_total:.2f}. "
+    f"The difference is ₹{99860.20 - clean_total:.2f}, attributable to the "
+    f"5 duplicate rows removed in Task 3. Their independently calculated "
+    f"combined order value is ₹{duplicate_total:.2f}. Filling missing "
+    f"discount_pct values with 0 and missing ratings with the median does "
+    f"not change the order value total."
+)
